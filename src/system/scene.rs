@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use nalgebra::{Matrix4, Vector3, UnitQuaternion, U1, U3, Rotation};
-use world::entity::Entity;
+use system::entity::Entity;
 
 pub type Transform = u32;
 
