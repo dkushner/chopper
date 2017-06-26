@@ -1,8 +1,10 @@
+#[macro_use]
+extern crate gfx;
+extern crate gfx_window_glutin;
+extern crate glutin;
+extern crate gfx_app;
 extern crate nalgebra;
-extern crate vulkano;
-extern crate vulkano_shaders;
 extern crate winit;
-extern crate vulkano_win;
 
 mod system;
 mod core;
