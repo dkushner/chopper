@@ -1,43 +1,46 @@
+use gfx;
 use system::entity::Entity;
-
-gfx_defines!{
-
-}
+use std::collections::BTreeMap;
+use nalgebra::Vector3;
 
 pub type Mesh = u32;
 
-pub struct RenderManager {
-    meshes: BTreeMap<Entity, Mesh>,
+mod mesh {
+    use gfx;
 
-    entity: Vec<Entity>,
-}
-
-mod particle {
-    gfx_defines! {
+    gfx_defines!{
         vertex Vertex {
             position: [f32; 3] = "position",
-            velocity: [f32; 3] = "velocity",
-            color: [f32; 4] = "color",
+            uv: [f32; 2] = "uv",
+        }
+
+        vertex Instance {
+            translate: [f32; 3] = "translate",
+            color: u32 = "color",
         }
 
         constant Locals {
-            aspect: f32 = "aspect"
+            transform: [[f32; 4]; 4] = "transform",
         }
 
         pipeline pipe {
-            vertex_buffer: gfx::VertexBuffer<Vertex> = (),
-            locals: gfx::ConstantBuffer<Locals> = "Locals",
-            out_color: gfx::BlendTarget<ColorFormat> = ("Target0", gfx::state::ColorMask::all(), gfx::preset::blend::ALPHA),
+            vertices: gfx::VertexBuffer<Vertex> = (),
+            vertex_locals: gfx::ConstantBuffer<Locals> = "locals",
         }
     }
+}
 
-    impl Vertex {
-        fn new() -> Self {
-            Vertex {
-                position: Default::default(),
-                velocity: Default::default(),
-                color: [f32; 4] = "color",
-            }
-        }
+pub struct MeshDescription {
+    pub vertices: Vector3<f32>,
+    pub uvs: Vector3<f32>
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn creation() {
+
     }
 }

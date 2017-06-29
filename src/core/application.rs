@@ -1,36 +1,69 @@
-pub enum GraphicsBackend {
-    Vulkan,
-    OpenGL,
-    Metal
-}
+use gfx::{self, Device, Factory};
+use winit::{self, Window};
+use core::platform::{Platform, PlatformIdentity};
+use glutin;
+
+use gfx_window_glutin;
+
+#[cfg(feature = "metal")]
+use gfx_window_metal;
 
 pub struct ApplicationOptions {
-    pub graphics_backend: GraphicsBackend,
+    pub platform: PlatformIdentity,
     pub window_position: (u32, u32),
     pub window_dimensions: (u32, u32),
+    pub title: String,
 }
 
-pub struct Application {
-    device: Box<GraphicsDevice>
+pub struct Application<D: Device, F: Factory<D::Resources>> {
+    window: Window,
+    platform: Platform<D, F>,
 }
 
-impl Application {
-    pub fn new(options: &ApplicationOptions) -> Application {
-        // 1. Create and initialize any and all physical devices including graphics,
-        //    input, sound, etc.
-        let device = match options.graphics_backend {
-            GraphicsBackend::Vulkan => VulkanDevice::new(),
-            _ => unimplemented!()
+impl <D: Device, F: Factory<D::Resources>> Application<D, F> {
+    pub fn new(options: &ApplicationOptions) -> Self {
+        let winit_builder = winit::WindowBuilder::new()
+            .with_dimensions(options.window_dimensions.0, options.window_dimensions.1)
+            .with_title(options.title.as_str());
+
+
+        let (window, mut device, mut factory, color, depth) = match options.platform {
+            PlatformIdentity::OpenGL => {
+                let events = glutin::EventsLoop::new();
+                let gl_version = glutin::GlRequest::GlThenGles {
+                    opengl_version: (3, 2),
+                    opengles_version: (2, 0),
+                };
+
+                let builder = glutin::WindowBuilder::from_winit_builder(winit_builder)
+                    .with_gl(gl_version)
+                    .with_vsync();
+
+                gfx_window_glutin::init::<gfx::format::Rgba8, gfx::format::DepthStencil>(builder, &events)
+            },
+            PlatformIdentity::Metal => {
+                use gfx::texture::Size;
+
+                let (window, mut device, mut factory, color) = gfx_window_metal::init::<gfx::format::Rgba8>(winit_builder);
+                let (width, height) = window.get_inner_size_points().unwrap();
+                let depth = factory.create_depth_stencil_view_only(width as Size, height as Size).unwrap;
+
+                (window, device, factory, color, depth)
+            }
+            _ => panic!()
         };
 
-        // 2. Create and initialize any subsystems required to load the application
-        //    including resources managers. These depend on the physical devices
-        //    configured in step 1.
-        // 3. Create and initialize the simulation world including any component
-        //    managers that require subsystems configured in step 2.
+
+        let encoder = factory.create_command_buffer().into();
 
         Application {
-            device: Box::new(device)
+            window: window,
+            platform: Platform::new(device, factory, encoder),
         }
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
 }

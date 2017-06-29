@@ -163,7 +163,7 @@ impl SceneManager {
         let instance = self.transform_for(entity) as usize;
 
         let local = self.local[instance];
-        let mut embed = local.fixed_slice::<U3, U3>(0, 0);
+        let embed = local.fixed_slice::<U3, U3>(0, 0);
 
         let scale_x = (embed[(0, 0)].powi(2) + embed[(1, 0)].powi(2) + embed[(2, 0)].powi(2)).sqrt();
         let scale_y = (embed[(0, 1)].powi(2) + embed[(1, 1)].powi(2) + embed[(2, 1)].powi(2)).sqrt();
@@ -365,7 +365,7 @@ mod tests {
 
     #[test]
     fn checking_transform() {
-        let mut manager = SceneManager::new();
+        let manager = SceneManager::new();
         let entity = 3 as Entity;
 
         assert!(!manager.has_transform(entity));
@@ -376,7 +376,7 @@ mod tests {
         let mut manager = SceneManager::new();
         let entity = 3 as Entity;
 
-        let component = manager.create_transform(entity);
+        let _ = manager.create_transform(entity);
         manager.set_local_position(entity, Vector3::new(3.0f32, 5.0f32, 0.5f32));
 
         assert_eq!(manager.local_position(entity), Vector3::new(3.0f32, 5.0f32, 0.5f32));
@@ -387,7 +387,7 @@ mod tests {
         let mut manager = SceneManager::new();
         let entity = 3 as Entity;
 
-        let component = manager.create_transform(entity);
+        let _ = manager.create_transform(entity);
         let rotation = Quaternion::from_euler_angles(PI / 4f32, PI / 4f32, PI / 4f32);
         manager.set_local_rotation(entity, rotation);
 
@@ -400,7 +400,7 @@ mod tests {
         let mut manager = SceneManager::new();
         let entity = 3 as Entity;
 
-        let component = manager.create_transform(entity);
+        let _ = manager.create_transform(entity);
         let scale = Vector3::new(0.5f32, 0.5f32, 0.5f32);
         manager.set_local_scale(entity, scale);
 
@@ -413,7 +413,7 @@ mod tests {
         let mut manager = SceneManager::new();
         let entity = 3 as Entity;
 
-        let component = manager.create_transform(entity);
+        let _ = manager.create_transform(entity);
         manager.set_world_position(entity, Vector3::new(3.0f32, 5.0f32, 0.5f32));
 
         assert_eq!(manager.world_position(entity), Vector3::new(3.0f32, 5.0f32, 0.5f32));
@@ -424,7 +424,7 @@ mod tests {
         let mut manager = SceneManager::new();
         let entity = 3 as Entity;
 
-        let component = manager.create_transform(entity);
+        let _ = manager.create_transform(entity);
         let rotation = Quaternion::from_euler_angles(PI / 4f32, PI / 4f32, PI / 4f32);
         manager.set_world_rotation(entity, rotation);
 
@@ -483,5 +483,25 @@ mod tests {
         assert_eq!(entities.len(), 1);
         assert_eq!(transforms.len(), 1);
         assert_eq!(entities[0], entity);
+    }
+
+    #[test]
+    fn resetting_transforms() {
+        let mut manager = SceneManager::new();
+        let entity = 3 as Entity;
+
+        let component = manager.create_transform(entity);
+        let rotation = Quaternion::from_euler_angles(PI / 4f32, PI / 4f32, PI / 4f32);
+
+        manager.set_local_rotation(entity, rotation);
+
+        let mut entities = Vec::new();
+        let mut transforms = Vec::new();
+
+        manager.reset();
+        manager.dirty(&mut entities, &mut transforms);
+
+        assert_eq!(entities.len(), 0);
+        assert_eq!(transforms.len(), 0);
     }
 }

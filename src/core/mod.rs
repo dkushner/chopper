@@ -1,3 +1,3 @@
 pub mod application;
+pub mod platform;
 
-use self::application::{Application, ApplicationOptions, GraphicsBackend};

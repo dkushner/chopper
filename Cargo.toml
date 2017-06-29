@@ -3,11 +3,32 @@ name = "chopper"
 version = "0.1.0"
 authors = ["David Kushner <root@davidkushner.me>"]
 
+[features]
+metal = ["gfx_device_metal", "gfx_window_metal"]
+vulkan = ["gfx_device_vulkan", "gfx_window_vulkan"]
+
 [dependencies]
 time = "0.1.37"
 nalgebra = "0.12.3"
-winit = "0.6.4"
+winit = "0.6.0"
 gfx = "0.16"
-glutin = "*"
-gfx_window_glutin = "*"
+gfx_core = "0.7.1"
+glutin = "0.8.0"
+gfx_device_gl = "0.14.1"
+gfx_window_glutin = "0.16.0"
 
+[dependencies.gfx_device_vulkan]
+version = "0.1.0"
+optional = true
+
+[dependencies.gfx_window_vulkan]
+version = "0.1.0"
+optional = true
+
+[dependencies.gfx_device_metal]
+version = "0.2.0"
+optional = true
+
+[dependencies.gfx_window_metal]
+version = "0.2.0"
+optional = true
