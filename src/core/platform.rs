@@ -45,15 +45,13 @@ impl PlatformIdentifier for Platform<gfx_device_vulkan::Device, gfx_device_vulka
 pub struct Platform<D: Device, F: Factory<D::Resources>> {
     device: D,
     factory: F,
-    encoder: Encoder<D::Resources, D::CommandBuffer>,
 }
 
-impl <D: Device, F: Factory<D::Resources>> Platform<D, F> {
-    pub fn new(device: D, factory: F, encoder: Encoder<D::Resources, D::CommandBuffer>) -> Self {
+impl <D, F> Platform<D, F> where D: Device, F: Factory<D::Resources> {
+    pub fn new(device: D, factory: F) -> Self {
         Platform {
-            device: device,
-            factory: factory,
-            encoder: encoder
+            device,
+            factory
         }
     }
 }
