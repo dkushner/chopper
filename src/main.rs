@@ -7,6 +7,9 @@ extern crate winit;
 extern crate gfx_device_gl;
 extern crate gfx_window_glutin;
 
+#[macro_use]
+extern crate derivative;
+
 #[cfg(feature = "metal")]
 extern crate gfx_device_metal;
 

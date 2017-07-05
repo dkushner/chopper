@@ -1,6 +1,7 @@
 use gfx::{self, Device, Factory};
 use winit::{self, Window};
 use core::platform::{Platform, PlatformIdentity};
+use render::backend;
 use glutin;
 
 use gfx_device_gl;
@@ -32,11 +33,11 @@ pub trait ApplicationProxy {
     fn start(&self);
 }
 
-pub struct ApplicationBase<D: Device, F: Factory<D::Resources>> {
-    platform: Platform<D, F>,
+pub struct ApplicationBase<B: backend::Backend> {
+    platform: Platform<B>,
 }
 
-impl <D, F> ApplicationProxy for ApplicationBase<D, F> where D: Device, F: Factory<D::Resources> {
+impl <B> ApplicationProxy for ApplicationBase<B> where B: backend::Backend {
     fn start(&self) { }
 }
 
