@@ -16,13 +16,7 @@ pub struct Meta<R: backend::Backend> {
 }
 
 #[derive(Clone, Debug, Default, Eq, Hash, PartialEq)]
-pub struct Init<'d, R> where R: backend::Backend,
-    <R::ColorFormat as gfx_core::format::Formatted>::Channel: gfx_core::format::RenderChannel,
-    <R::ColorFormat as gfx_core::format::Formatted>::Surface: gfx_core::format::RenderSurface,
-    <R::DepthFormat as gfx_core::format::Formatted>::Channel: gfx_core::format::RenderChannel,
-    <R::DepthFormat as gfx_core::format::Formatted>::Surface: gfx_core::format::DepthSurface,
-    <R::DepthFormat as gfx_core::format::Formatted>::Surface: gfx_core::format::StencilSurface {
-
+pub struct Init<'d, R> where R: backend::Backend {
     pub constants: Vec<<gfx::RawConstantBuffer as DataLink<'d>>::Init>,
     pub globals: Vec<<gfx::RawGlobal as DataLink<'d>>::Init>,
     pub color_targets: Vec<<target::RenderTarget<R::ColorFormat> as DataLink<'d>>::Init>,
@@ -32,13 +26,7 @@ pub struct Init<'d, R> where R: backend::Backend,
     pub vertices: Vec<<gfx::RawVertexBuffer as DataLink<'d>>::Init>,
 }
 
-impl<'d, R> PipelineInit for Init<'d, R> where R: backend::Backend,
-    <R::ColorFormat as gfx_core::format::Formatted>::Channel: gfx_core::format::RenderChannel,
-    <R::ColorFormat as gfx_core::format::Formatted>::Surface: gfx_core::format::RenderSurface,
-    <R::DepthFormat as gfx_core::format::Formatted>::Channel: gfx_core::format::RenderChannel,
-    <R::DepthFormat as gfx_core::format::Formatted>::Surface: gfx_core::format::DepthSurface,
-    <R::DepthFormat as gfx_core::format::Formatted>::Surface: gfx_core::format::StencilSurface {
-
+impl<'d, R> PipelineInit for Init<'d, R> where R: backend::Backend {
     type Meta = Meta<R>;
 
     fn link_to<'s>(&self, desc: &mut pso::Descriptor, info: &'s gfx::ProgramInfo) -> Result<Self::Meta, pso::InitError<&'s str>> {

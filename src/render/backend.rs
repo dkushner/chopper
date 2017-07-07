@@ -25,13 +25,16 @@ pub struct Metal;
 /// Vulkan rendering backend.
 pub struct Vulkan;
 
-pub trait Backend {
+pub trait Backend where Self::ColorFormat: gfx::format::Formatted,
+    <Self::ColorFormat as gfx::format::Formatted>::Channel: gfx_core::format::RenderChannel,
+    <Self::ColorFormat as gfx::format::Formatted>::Surface: gfx_core::format::RenderSurface {
+
     type Resources: gfx::Resources;
     type Device: gfx::Device;
     type Factory: gfx::Factory<Self::Resources>;
     type CommandBuffer: gfx::CommandBuffer<Self::Resources>;
-    type ColorFormat: gfx::format::Formatted;
-    type DepthFormat: gfx::format::Formatted;
+    type ColorFormat;
+    type DepthFormat;
     type Window;
     type ShaderModel;
     type DepthStencilView;
@@ -39,7 +42,7 @@ pub trait Backend {
     type Sampler;
 }
 
-impl Backend for OpenGL where {
+impl Backend for OpenGL {
     type Resources = gfx_device_gl::Resources;
     type Device = gfx_device_gl::Device;
     type Factory = gfx_device_gl::Factory;
